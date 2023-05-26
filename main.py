@@ -2,6 +2,12 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, unquote_plus
 import mimetypes
 import pathlib
+import json
+import datetime
+import socket
+from threading import Thread
+
+
 
 class MyHandler(BaseHTTPRequestHandler):
 
@@ -39,6 +45,22 @@ class MyHandler(BaseHTTPRequestHandler):
         raw_params = data.split('&')
         data = {key: value for key, value in [param.split('=') for param in raw_params]}
         return data
+    
+    
+    FILE_JSON = pathlib.Path().joinpath('storage/data.json')
+    
+    def save_data_from_server(data):
+        with open(FILE_JSON, 'r') as fh:
+        all_records = json.load(fh)
+        new_record = {srt(datetime.datetime.now()): parse_form_data()}
+        all_records = all_records.update(new_record)
+        with open(FILE_JSON, 'w') as file:
+            json.dump(all_records, file)
+        
+        
+        
+        
+        
 
     def render_template(self, html_page):
         self.send_response(200)
@@ -47,6 +69,12 @@ class MyHandler(BaseHTTPRequestHandler):
 
         with open(html_page, 'rb') as file:
             self.wfile.write(file.read())
+
+# socket
+def send_data_to_socket(data):
+    c_socket = socket.socket()
+    
+
 
 
 if __name__ == '__main__':
