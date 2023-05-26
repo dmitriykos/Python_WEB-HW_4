@@ -18,9 +18,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
     def do_GET(self):
-
         url = urlparse(self.path)
-
         if url.path == '/':
             self.render_template('index.html')
         elif url.path == '/message':
@@ -35,7 +33,6 @@ class MyHandler(BaseHTTPRequestHandler):
         raw_data = self.rfile.read()
         data = unquote_plus(raw_data.decode())
         data = self.parse_form_data(data)
-
         print(data)
 
     def parse_form_data(self, data):
@@ -44,13 +41,12 @@ class MyHandler(BaseHTTPRequestHandler):
         return data
 
     def render_template(self, html_page):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
 
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
-
-            with open(html_page, 'rb') as file:
-                self.wfile.write(file.read())
+        with open(html_page, 'rb') as file:
+            self.wfile.write(file.read())
 
 
 if __name__ == '__main__':
